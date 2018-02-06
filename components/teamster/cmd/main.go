@@ -36,6 +36,9 @@ import (
 	"github.com/paxautoma/operos/components/teamster/pkg/teamster"
 )
 
+// Set through linker flags
+var operosVersion string
+
 func main() {
 	logger := logrus.StandardLogger()
 	log.SetOutput(logger.Writer())
@@ -65,7 +68,7 @@ func main() {
 		log.Fatalf("error: Unable to connect to Etcd cluster: %s", err)
 	}
 
-	oc, err := cluster.InstantiateCluster(client, 5*time.Second, *installID)
+	oc, err := cluster.InstantiateCluster(client, 5*time.Second, *installID, operosVersion)
 
 	if err != nil {
 		log.Fatalf("error: Unable to instantiate operos cluster: %s", err)

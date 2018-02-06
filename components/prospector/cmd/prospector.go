@@ -27,6 +27,9 @@ import (
 	"github.com/paxautoma/operos/components/prospector"
 )
 
+// Set through linker flags
+var operosVersion string
+
 //GetHostUUID function which returns the JSON representation of the device tree
 //where the code is executed. Should be run wih the root priveledges, to
 //ensure that all the device information is accessed correctly
@@ -127,6 +130,7 @@ func ShowDeviceTree() {
 
 	out := new(prospector.Report)
 	out.System = v
+	out.OperosVersion = operosVersion
 	out.Storage = blockDevices
 
 	if jsonout, err := json.Marshal(out); err == nil {

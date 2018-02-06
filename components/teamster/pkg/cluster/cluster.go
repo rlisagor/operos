@@ -36,8 +36,8 @@ import (
 	"github.com/cloudflare/cfssl/signer"
 	"github.com/cloudflare/cfssl/signer/local"
 	"github.com/coreos/etcd/clientv3"
-	"github.com/pkg/errors"
 	"github.com/paxautoma/operos/components/prospector"
+	"github.com/pkg/errors"
 )
 
 type NodeOSD struct {
@@ -50,6 +50,8 @@ type Node struct {
 	Id                 string
 	Fingerprint        *prospector.UUIDType
 	LatestReport       *prospector.Report
+	LastIDRequest      time.Time
+	BirthDate          time.Time
 	KubeletPrivateKey  []byte
 	KubeletCertificate []byte
 	LuksKeyFile        []byte
@@ -69,6 +71,7 @@ type OperosCluster struct {
 	etcdRequestTimeout   time.Duration
 	CephConfig           []byte
 	Secrets              map[string][]byte
+	runtimeVersion       string
 }
 
 func (cluster *OperosCluster) loadNode(nodeid string) *Node {
@@ -93,6 +96,10 @@ func (cluster *OperosCluster) loadNode(nodeid string) *Node {
 				log.Printf("unable to unmarshal latest report from prospector: %s", err)
 			}
 			node.LatestReport = report
+		case "lastidrequest":
+			node.LastIDRequest.UnmarshalText(ev.Value)
+		case "birthdate":
+			node.BirthDate.UnmarshalText(ev.Value)
 		case "secret-kubelet-key":
 			node.KubeletPrivateKey = ev.Value
 		case "secret-kubelet-cert":
@@ -150,6 +157,24 @@ func (cluster *OperosCluster) storeNode(node *Node) error {
 	_, err = cluster.etcd.Put(ctx, fmt.Sprintf("%s/%s", node_key, "fingerprint"), node.Fingerprint.ToHexString())
 	if err != nil {
 		return err
+	}
+
+	if lir, err := node.LastIDRequest.MarshalText(); err != nil {
+		log.Printf("failed to marshal node LastIDRequest")
+	} else {
+		_, err = cluster.etcd.Put(ctx, fmt.Sprintf("%s/%s", node_key, "lastidrequest"), string(lir))
+		if err != nil {
+			return err
+		}
+	}
+
+	if bd, err := node.BirthDate.MarshalText(); err != nil {
+		log.Printf("failed to marshal Birthdate")
+	} else {
+		_, err = cluster.etcd.Put(ctx, fmt.Sprintf("%s/%s", node_key, "birthdate"), string(bd))
+		if err != nil {
+			return err
+		}
 	}
 
 	_, err = cluster.etcd.Put(ctx, fmt.Sprintf("%s/%s", node_key, "secret-kubelet-key"), string(node.KubeletPrivateKey))
@@ -334,6 +359,8 @@ func (cluster *OperosCluster) AddNode(id *prospector.UUIDType, uuid string, repo
 	node := new(Node)
 	node.Id = uuid
 	node.Fingerprint = id
+	node.BirthDate = time.Now()
+	node.LastIDRequest = time.Now()
 	node.LatestReport = report
 
 	log.Printf("Adding node %s to cluster %s", node.Id, cluster.InstallID)
@@ -452,9 +479,9 @@ func (cluster *OperosCluster) UpdateNode(node *Node, id *prospector.UUIDType, uu
 
 	}
 
-	// -- update node last request field
 	// -- check node certificate validity and update
 	node.LatestReport = report
+	node.LastIDRequest = time.Now()
 	cluster.storeNode(node)
 	return nil
 }
@@ -497,12 +524,13 @@ func operosSigner(certificate []byte, key []byte) (signer.Signer, error) {
 	return local.NewSigner(priv, parsedCa, signer.DefaultSigAlgo(priv), policy)
 }
 
-func InstantiateCluster(etcd *clientv3.Client, requestTimeout time.Duration, installID string) (*OperosCluster, error) {
+func InstantiateCluster(etcd *clientv3.Client, requestTimeout time.Duration, installID string, version string) (*OperosCluster, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 
 	oc := new(OperosCluster)
 	oc.etcd = etcd
 	oc.etcdRequestTimeout = requestTimeout
+	oc.runtimeVersion = version
 	oc.Nodes = make(map[string]*Node)
 	oc.Vars = make(map[string]string)
 	oc.Secrets = make(map[string][]byte)

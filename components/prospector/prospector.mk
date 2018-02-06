@@ -19,7 +19,9 @@ prospector-novm: iso/worker/airootfs/usr/bin/prospector
 
 iso/worker/airootfs/usr/bin/prospector: $(PROSPECTOR_FILES) vendor
 	mkdir -p $(dir $@)
-	go build -v -o $@ ./components/prospector/cmd/prospector.go
+	go build -v -o $@ \
+		-ldflags "-X main.operosVersion=$(ISO_VERSION)" \
+		./components/prospector/cmd/prospector.go
 
 clean: clean-prospector
 

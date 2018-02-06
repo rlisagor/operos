@@ -17,6 +17,7 @@ limitations under the License.
 package prospector
 
 type Report struct {
-	System  *DeviceTree  `json:"hardware"`
-	Storage BlockDevices `json:"storage"`
+	System        *DeviceTree  `json:"hardware"`
+	Storage       BlockDevices `json:"storage"`
+	OperosVersion string       `json:"operos_version"`
 }

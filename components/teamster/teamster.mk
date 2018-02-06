@@ -19,7 +19,9 @@ teamster-novm: iso/controller/airootfs/usr/bin/teamster
 
 iso/controller/airootfs/usr/bin/teamster: components/teamster/pkg/teamster/teamster.pb.go $(TEAMSTER_FILES) vendor
 	mkdir -p $(dir $@)
-	go build -v -o $@ ./components/teamster/cmd/main.go
+	go build -v -o $@ \
+		-ldflags "-X main.operosVersion=$(ISO_VERSION)" \
+		./components/teamster/cmd/main.go
 
 clean: clean-teamster
 
