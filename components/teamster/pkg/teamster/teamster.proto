@@ -45,10 +45,17 @@ message SetLatestVersionRequest {
     string version = 1;
 }
 
+message GetUpdateAvailableResponse {
+    bool updatable = 1;
+    string currentVersion = 2;
+    string updateVersion = 3;
+}
+
 service Teamster {
     rpc ListNodes (Empty) returns (ListNodesResponse);
     rpc GetNodeHardware (GetNodeHardwareRequest) returns (GetNodeHardwareResponse);
     rpc GetCACertExpiry (Empty) returns (GetCACertExpiryResponse);
     rpc SetRootPassword (SetRootPasswordRequest) returns (Empty);
     rpc SetLatestVersion (SetLatestVersionRequest) returns (Empty);
+    rpc GetUpdateAvailable (Empty) returns (GetUpdateAvailableResponse);
 }

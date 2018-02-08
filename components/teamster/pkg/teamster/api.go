@@ -226,6 +226,14 @@ func (t *TeamsterAPI) SetLatestVersion(ctx context.Context, req *SetLatestVersio
 	return &Empty{}, nil
 }
 
+func (t *TeamsterAPI) GetUpdateAvailable(context.Context, *Empty) (*GetUpdateAvailableResponse, error) {
+	return &GetUpdateAvailableResponse{
+		Updatable:      t.cluster.RuntimeVersion != t.cluster.LatestVersion,
+		CurrentVersion: t.cluster.RuntimeVersion,
+		UpdateVersion:  t.cluster.LatestVersion,
+	}, nil
+}
+
 const saltChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./"
 
 func (t *TeamsterAPI) SetRootPassword(ctx context.Context, req *SetRootPasswordRequest) (*Empty, error) {

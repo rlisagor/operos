@@ -71,7 +71,7 @@ type OperosCluster struct {
 	etcdRequestTimeout   time.Duration
 	CephConfig           []byte
 	Secrets              map[string][]byte
-	runtimeVersion       string
+	RuntimeVersion       string
 	LatestVersion        string
 }
 
@@ -531,7 +531,7 @@ func InstantiateCluster(etcd *clientv3.Client, requestTimeout time.Duration, ins
 	oc := new(OperosCluster)
 	oc.etcd = etcd
 	oc.etcdRequestTimeout = requestTimeout
-	oc.runtimeVersion = version
+	oc.RuntimeVersion = version
 	oc.Nodes = make(map[string]*Node)
 	oc.Vars = make(map[string]string)
 	oc.Secrets = make(map[string][]byte)
