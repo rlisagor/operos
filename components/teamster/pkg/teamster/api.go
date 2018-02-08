@@ -221,6 +221,11 @@ func (t *TeamsterAPI) GetCACertExpiry(context.Context, *Empty) (*GetCACertExpiry
 	}, nil
 }
 
+func (t *TeamsterAPI) SetLatestVersion(ctx context.Context, req *SetLatestVersionRequest) (*Empty, error) {
+	t.cluster.LatestVersion = req.Version
+	return &Empty{}, nil
+}
+
 const saltChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./"
 
 func (t *TeamsterAPI) SetRootPassword(ctx context.Context, req *SetRootPasswordRequest) (*Empty, error) {

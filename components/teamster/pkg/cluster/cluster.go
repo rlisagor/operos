@@ -72,6 +72,7 @@ type OperosCluster struct {
 	CephConfig           []byte
 	Secrets              map[string][]byte
 	runtimeVersion       string
+	LatestVersion        string
 }
 
 func (cluster *OperosCluster) loadNode(nodeid string) *Node {
