@@ -17,13 +17,19 @@ limitations under the License.
 package common
 
 import (
+	stdlog "log"
 	"runtime/debug"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
+
+func SetupLogging() {
+	log.SetLevel(log.DebugLevel)
+	stdlog.SetOutput(log.StandardLogger().Writer())
+}
 
 func LogPanic() {
 	if r := recover(); r != nil {
-		logrus.Fatalf("%s: %s", r, debug.Stack())
+		log.Fatalf("%s: %s", r, debug.Stack())
 	}
 }

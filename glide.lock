@@ -1,10 +1,12 @@
-hash: e177083aea3df9eca02f1ba0fc928a68aec618688ecbbfc0682887fcbcc8a588
-updated: 2018-01-11T13:58:08.297136017-08:00
+hash: 64d1155e2803447ac1929a8a86bcaf1a03af7f9d7d2e28230213f8d04a5f8fc1
+updated: 2018-02-07T09:51:58.728780293-08:00
 imports:
 - name: github.com/amoghe/go-crypt
   version: f85b640b0eefd979ef9bb2e919b53fe66f8b7b39
+- name: github.com/cavaliercoder/grab
+  version: 3b6830dae49bc01e25b4676dae3a2a06c1b1485e
 - name: github.com/cloudflare/cfssl
-  version: db0d0650b6496bfe8061ec56a92edd32d8e75c30
+  version: 27b05afbb5132883b0942e87e3dd53d194aaa2f5
   subpackages:
   - auth
   - certdb
@@ -22,7 +24,7 @@ imports:
   - signer
   - signer/local
 - name: github.com/coreos/etcd
-  version: 9e079d8f02af4f1fabcd015994d60051d22024f3
+  version: c23606781f63d09917a1e7abfcefeb337a9608ea
   subpackages:
   - auth/authpb
   - clientv3
@@ -87,15 +89,16 @@ imports:
   - ptypes/duration
   - ptypes/struct
   - ptypes/timestamp
-- name: github.com/google/certificate-transparency
-  version: 6e5648d13b43cdde25cc8274b87675230ffefbd6
-  repo: https://github.com/google/certificate-transparency
+- name: github.com/google/certificate-transparency-go
+  version: dca6ef1506f6d1ca5f2996809f97b43a0ddd6785
   subpackages:
-  - go
-  - go/asn1
-  - go/client
-  - go/x509
-  - go/x509/pkix
+  - asn1
+  - client
+  - client/configpb
+  - jsonclient
+  - tls
+  - x509
+  - x509/pkix
 - name: github.com/google/gofuzz
   version: 44d81051d367757e1c7c6a5a86423ece9afcf63c
 - name: github.com/google/uuid
@@ -105,7 +108,7 @@ imports:
 - name: github.com/gorilla/handlers
   version: 90663712d74cb411cbef281bc1e08c19d1a76145
 - name: github.com/gorilla/mux
-  version: 7f08801859139f86dfafd1c296e2cba9a80d292e
+  version: 53c1911da2b537f792e7cafcb446b05ffe33b996
 - name: github.com/gorilla/securecookie
   version: e59506cc896acb7f7bf732d4fdf5e25f7ccd8983
 - name: github.com/gorilla/sessions
@@ -119,7 +122,7 @@ imports:
   - tags
   - tags/logrus
 - name: github.com/grpc-ecosystem/grpc-gateway
-  version: 07f5e79768022f9a3265235f0db4ac8c3f675fec
+  version: 8cc3a55af3bcf171a1c23a90c4df9cf591706104
   subpackages:
   - runtime
   - runtime/internal
@@ -142,9 +145,6 @@ imports:
   version: 9e777a8366cce605130a531d2cd6363d07ad7317
   subpackages:
   - runewidth.go
-- name: github.com/mreiferson/go-httpclient
-  version: 63fe23f7434723dc904c901043af07931f293c47
-  repo: https://github.com/mreiferson/go-httpclient
 - name: github.com/msteinert/pam
   version: f4cd9f5e29232537a12db1678f48c702ad6896b7
 - name: github.com/nsf/termbox-go
@@ -162,7 +162,7 @@ imports:
 - name: github.com/spf13/pflag
   version: e57e3eeb33f795204c1ca35f56c44f83227c6e66
 - name: github.com/stretchr/testify
-  version: b91bfb9ebec76498946beb6af7c0230c7cc7ba6c
+  version: 12b6f73e6084dad08a7c6e575284b177ecafbc71
   subpackages:
   - assert
   - require
@@ -173,15 +173,17 @@ imports:
 - name: github.com/wercker/journalhook
   version: 158dbb9fcbfcc3386437e516bc71b58690606e91
 - name: golang.org/x/crypto
-  version: 5f55bce93ad2c89f411e009659bb1fd83da36e7b
+  version: 13931e22f9e72ea58bb73048bc752b48c6d4d4ac
   subpackages:
+  - ocsp
   - pkcs12
   - pkcs12/internal/rc2
   - ssh/terminal
 - name: golang.org/x/net
-  version: ab555f366c4508dbe0802550b1b20c46c5c18aa0
+  version: 5ccada7d0a7ba9aeb5d3aca8d3501b4c2a509fec
   subpackages:
   - context
+  - context/ctxhttp
   - http2
   - http2/hpack
   - idna
@@ -213,7 +215,7 @@ imports:
   - googleapis/api/annotations
   - googleapis/rpc/status
 - name: google.golang.org/grpc
-  version: 7cea4cc846bcf00cbb27595b07da5de875ef7de9
+  version: 6b51017f791ae1cfbec89c52efdf444b13b550ef
   subpackages:
   - balancer
   - balancer/base

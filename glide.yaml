@@ -1,4 +1,4 @@
-package: src.paxautoma.com/paxautoma/operos
+package: github.com/paxautoma/operos
 import:
 - package: k8s.io/client-go
   version: ^4.0.0
@@ -68,3 +68,5 @@ import:
 - package: github.com/gorilla/sessions
   version: ^1.1.0
 - package: github.com/msteinert/pam
+- package: github.com/cavaliercoder/grab
+  version: ^2.0.0

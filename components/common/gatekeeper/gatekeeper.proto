@@ -28,6 +28,17 @@ message AuthorizeDiagUploadResp {
     string credential =5;
 }
 
+message UpgradeCheckReq {
+    string cluster_id = 1;
+    string current_version = 2;
+}
+
+message UpgradeCheckResp {
+    string available_version = 1;
+    repeated string download_urls = 2;
+}
+
 service Gatekeeper {
     rpc AuthorizeDiagUpload (AuthorizeDiagUploadReq) returns (AuthorizeDiagUploadResp);
+    rpc UpgradeCheck (UpgradeCheckReq) returns (UpgradeCheckResp);
 }
