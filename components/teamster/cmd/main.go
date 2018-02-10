@@ -90,6 +90,9 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
+	log.Printf("listening for gRPC on %s", *listenGrpc)
+	log.Printf("listening for HTTP on %s", *listenAddr)
+
 	go func() {
 		grpcServer.Serve(lis)
 	}()

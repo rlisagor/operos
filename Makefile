@@ -30,6 +30,7 @@ include components/prospector/prospector.mk
 include components/teamster/teamster.mk
 include components/ipxe/ipxe.mk
 include components/waterfront/waterfront.mk
+include components/upgrader/upgrader.mk
 
 # Write the .buildnum file if the build number changed since the last build.
 # This file can serve as a prerequisite for builds that depend on the build
@@ -52,7 +53,7 @@ vagrant:
 
 .PHONY: packages images test isobuild
 
-packages images test isobuild isobuild-dev installer statustty diag prospector teamster ipxe:
+packages images test isobuild isobuild-dev installer statustty diag prospector teamster ipxe upgrader:
 	time vagrant ssh -c "cd ~/operos && make $@-novm BUILD_NUM=$(BUILD_NUM)"
 
 .PHONY: packages-novm

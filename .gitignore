@@ -10,6 +10,7 @@ iso/base/airootfs/usr/bin/operosdiagauth
 iso/node/airootfs/usr/bin/statustty
 iso/worker/airootfs/usr/bin/prospector
 iso/controller/airootfs/usr/bin/teamster
+iso/controller/airootfs/usr/bin/upgrader
 iso/controller/airootfs/opt/docker-images/*
 iso/controller/airootfs/tftpboot
 iso/installer/airootfs/root/versions
