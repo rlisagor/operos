@@ -1,0 +1,102 @@
+#!/bin/bash -e
+# Copyright 2018 Pax Automa Systems, Inc.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#    http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+cursettings=${cursettings:-/etc/paxautoma/settings}
+tmpsettings=${tmpsettings:-/tmp/operos-new-settings}
+
+has_file_changed() {
+    local targetfile=$1
+
+    if [[ ! -e ${tmpsettings} ]]; then
+        # first-time initialization, file changed
+        return 0
+    fi
+    
+    if [[ ! -e ${targetfile} ]]; then
+        # file does not exist
+        return 0
+    fi
+
+    if diff -q \
+        <(set -a; . ${tmpsettings}; envsubst < ${targetfile}) \
+        <(set -a; . ${cursettings}; envsubst < ${targetfile}) > /dev/null
+    then
+        # file unchanged
+        return 1
+    else
+        # file changed
+        return 0
+    fi
+}
+
+have_files_changed() {
+    for f in $@; do
+        has_file_changed $f && return 0
+    done
+    return 1
+}
+
+write_file() {
+    local src_file=$1 tgt_path=$2
+
+    echo "writing new version of $tgt_path/$(basename $src_file)"
+    (
+        set -a
+        . ${cursettings}
+        envsubst < $src_file > $tgt_path/$(basename $src_file)
+    )
+}
+
+update_settings() {
+    local newsettings=$(operoscfg -a)
+
+    if [[ -e ${cursettings} ]]; then
+        if diff -q ${cursettings} <(echo "${newsettings}") > /dev/null; then
+            echo "settings unchanged"
+            return
+        fi
+
+        echo "settings changed, updating"
+        cp ${cursettings} ${tmpsettings}
+    fi
+
+    echo "${newsettings}" > ${cursettings}
+
+    mkdir -p /etc/kubernetes/manifests
+    mkdir -p /var/operos/addons
+
+    for manifest in /usr/share/operos/manifests/*; do
+        if has_file_changed $manifest; then
+            write_file $manifest /etc/kubernetes/manifests
+        fi
+    done
+
+    for manifest in /usr/share/operos/addons/*; do
+        if has_file_changed $manifest; then
+            write_file $manifest /var/operos/addons
+        fi
+    done
+}
+
+update_password() {
+    local pass=$(operoscfg -g rootpass)
+    if ! grep -q "^root:${pass}:" /etc/shadow; then
+        echo "setting root password"
+        echo "root:${pass}" | chpasswd -e
+    fi
+}
+
+update_settings
+update_password

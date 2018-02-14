@@ -7,7 +7,6 @@ Wants=network-online.target
 Before=teamster.service
 
 [Service]
-EnvironmentFile=/etc/paxautoma/settings
 Type=oneshot
 ExecStart=/etc/systemd/scripts/ceph-mon-init
 

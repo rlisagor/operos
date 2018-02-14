@@ -7,7 +7,8 @@ After=network-online.target
 [Service]
 TimeoutStartSec=0
 Restart=always
-EnvironmentFile=/etc/paxautoma/settings
+EnvironmentFile=/etc/paxautoma/initial-settings
+EnvironmentFile=-/etc/paxautoma/settings
 ExecStart=/usr/bin/teamster \
     -listen-addr ${OPEROS_CONTROLLER_IP}:2680 \
     -listen-grpc ${OPEROS_CONTROLLER_IP}:2681 \

@@ -1,0 +1,11 @@
+[Unit]
+Description=Periodically update machine configuration
+Requires=teamster.service
+After=teamster.service
+
+[Timer]
+OnUnitInactiveSec=10s
+AccuracySec=1s
+
+[Install]
+WantedBy=multi-user.target

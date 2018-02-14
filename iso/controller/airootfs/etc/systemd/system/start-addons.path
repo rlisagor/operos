@@ -1,0 +1,10 @@
+[Unit]
+Description=Update Kubernetes addon manifests
+Requires=kubelet.service
+After=kubelet.service prepare-addons.path
+
+[Path]
+DirectoryNotEmpty=/var/operos/manifests
+
+[Install]
+WantedBy=multi-user.target

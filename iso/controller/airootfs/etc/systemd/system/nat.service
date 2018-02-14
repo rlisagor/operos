@@ -1,7 +1,7 @@
 [Unit]
 Description=NAT
-Before=network-pre.target
-Wants=network-pre.target
+Requires=apply-settings.service
+After=apply-settings.service
 
 [Service]
 Type=oneshot

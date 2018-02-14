@@ -15,20 +15,6 @@
 
 echo \> Setting up Kubernetes >&3
 
-install_manifests() {
-    local src_path=$1
-    local tgt_path=$2
-
-    mkdir -p $src_path
-    for manifest in $src_path/*; do
-        envsubst < $manifest > $tgt_path/$(basename $manifest)
-    done
-}
-
-mkdir -p /mnt/etc/kubernetes/{manifests,addons}
-install_manifests /root/manifests/kubelet /mnt/etc/kubernetes/manifests
-install_manifests /root/manifests/addons /mnt/etc/kubernetes/addons
-
 cat > /mnt/etc/kubernetes/config <<EOF
 KUBE_ALLOW_PRIV="--allow-privileged=true"
 KUBE_MASTER="--master=http://127.0.0.1:8080"

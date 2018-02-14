@@ -41,8 +41,12 @@ sed -i 's/#ShowStatus=.*/ShowStatus=no/' /etc/systemd/system.conf
 systemctl disable getty@tty1.service
 systemctl enable statustty.service
 
+# Settings
+systemctl enable apply-settings.timer
+
 # Addons to run inside Kubernetes
-systemctl enable start-addons.service
+systemctl enable prepare-addons.service
+systemctl enable start-addons.path
 
 # Ceph
 systemctl enable operos-ceph-mon-init.service

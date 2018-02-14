@@ -1,5 +1,5 @@
 [Unit]
-Description=Post-installation setup
+Description=Unpack Docker images on first boot
 Requires=docker.service
 After=docker.service
 Before=kubelet.service

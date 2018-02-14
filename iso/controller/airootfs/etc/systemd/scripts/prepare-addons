@@ -1,0 +1,64 @@
+#!/bin/bash -xe
+# Copyright 2018 Pax Automa Systems, Inc.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#    http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+prepare_waterfront() {
+    local key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 32 | base64)
+    cat > /var/operos/manifests/05-waterfront-secret.yml <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: waterfront-session-key
+  namespace: operos
+type: Opaque
+data:
+  session-key: ${key}
+EOF
+}
+
+prepare_ceph() {
+    local ceph_cadmin_key=$(ceph auth get-key client.admin | base64)
+    local ceph_kube_client_key=$(ceph --cluster ceph auth get client.kube | grep "key =" | sed -e "s/key = //" | base64)
+
+    ceph --cluster ceph osd pool create kube 128 128
+
+    cat > /var/operos/manifests/05-ceph-admin-key.yml <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-admin-key
+  namespace: kube-system
+type: kubernetes.io/rbd
+data:
+  key1: ${ceph_cadmin_key}
+EOF
+
+    cat > /var/operos/manifests/05-ceph-secret-kube.yml <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-secret-kube
+  namespace: default
+type: kubernetes.io/rbd
+data:
+  key1: ${ceph_kube_client_key}
+EOF
+}
+
+mkdir -p /var/operos/manifests
+
+prepare_waterfront
+prepare_ceph
+
+systemctl disable prepare-addons.service

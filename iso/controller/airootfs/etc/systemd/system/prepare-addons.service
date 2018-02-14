@@ -1,0 +1,10 @@
+[Unit]
+Description=Prepare Kubernetes add-ons on first boot
+After=operos-ceph-mon-init.service
+
+[Service]
+Type=oneshot
+ExecStart=/etc/systemd/scripts/prepare-addons
+
+[Install]
+WantedBy=multi-user.target

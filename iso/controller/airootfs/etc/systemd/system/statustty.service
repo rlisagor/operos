@@ -3,7 +3,8 @@ Description=TTY status display
 After=systemd-journald.service
 
 [Service]
-EnvironmentFile=/etc/paxautoma/settings
+EnvironmentFile=/etc/paxautoma/initial-settings
+EnvironmentFile=-/etc/paxautoma/settings
 ExecStart=-/sbin/agetty --noclear -o "--private-if ${CONTROLLER_PRIVATE_IF} --public-if ${CONTROLLER_PUBLIC_IF} --node-type Controller --kube-url http://localhost:8080" -l /usr/bin/statustty -n tty1 $TERM
 Type=simple
 Restart=always

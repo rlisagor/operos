@@ -1,0 +1,11 @@
+[Unit]
+Description=Update machine configuration
+Requires=teamster.service
+After=teamster.service
+
+[Service]
+Type=oneshot
+ExecStart=/etc/systemd/scripts/apply-settings
+
+[Install]
+WantedBy=multi-user.target

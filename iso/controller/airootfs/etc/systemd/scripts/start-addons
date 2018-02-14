@@ -13,9 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-MANIFEST_PATH=${MANIFEST_PATH:-/etc/kubernetes/addons}
-
-function wait_for_api() {
+wait_for_api() {
     while true; do
         /usr/bin/curl http://127.0.0.1:8080/version >/dev/null 2>&1
         result=$?
@@ -24,55 +22,20 @@ function wait_for_api() {
         fi
         sleep 1
     done
+    sleep 3
 }
 
-wait_for_api
+MANIFEST_PATH=${MANIFEST_PATH:-/var/operos/addons}
 
+wait_for_api
 set -e
 
-sleep 3
-
-kubectl create namespace operos
-
-key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 32)
-kubectl -n operos create secret generic waterfront-session-key --from-literal=session-key=$key
+if ! ls -A ${MANIFEST_PATH}/*.yml > /dev/null 2>&1; then
+    # nothing to apply
+    exit 0
+fi
 
 for manifest in ${MANIFEST_PATH}/*.yml; do
     kubectl apply -f $manifest
+    rm $manifest
 done
-
-. /etc/paxautoma/settings
-
-CEPH_CADMIN_KEY=$(ceph auth get-key client.admin)
-
-kubectl create secret generic ceph-admin-key --type="kubernetes.io/rbd" --from-literal=key1=$CEPH_CADMIN_KEY --namespace="kube-system"
-
-ceph --cluster ceph osd pool create kube 128 128
-
-CEPH_KUBE_CLIENT_KEY=$(ceph --cluster ceph auth get cient.kube | grep "key =" | sed -e "s/key = //")
-
-kubectl create secret generic ceph-secret-kube --type="kubernetes.io/rbd" --from-literal=key1=$CEPH_KUBE_CLIENT_KEY --namespace=default
-
-cat > /tmp/ceph-kube-storage-class.yml <<EOF
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: default
-  annotations:
-    storageclass.kubernetes.io/is-default-class: "true"
-provisioner: ceph.com/rbd
-parameters:
-  monitors: ${OPEROS_CONTROLLER_IP}:6789
-  adminId: admin
-  adminSecretName: ceph-admin-key
-  adminSecretNamespace: kube-system
-  pool: kube
-  userId: kube
-  userSecretName: ceph-secret-kube
-  imageFormat: "2"
-  imageFeatures: layering
-EOF
-
-kubectl create -f /tmp/ceph-kube-storage-class.yml --namespace=default
-
-systemctl disable start-addons.service
