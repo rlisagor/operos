@@ -5,7 +5,7 @@ After=operos-cfg-store.service
 Before=teamster.service
 
 [Service]
-EnvironmentFile=/etc/paxautoma/settings
+EnvironmentFile=/etc/paxautoma/initial-settings
 Type=oneshot
 ExecStart=/etc/systemd/scripts/operos-cfg-populate
 

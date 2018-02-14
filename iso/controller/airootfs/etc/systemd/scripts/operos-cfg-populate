@@ -26,7 +26,7 @@ if [ -z "$IS_CONFIGED" ] ; then
         var=${l/=*}
         val=${l/*=}
         etcd_cmd put "cluster/$OPEROS_INSTALL_ID/$var" "${val//\"}"
-    done < <(cat /etc/paxautoma/settings | sed -e '/^$/d' -e '/^#/d')
+    done < <(cat /etc/paxautoma/initial-settings | sed -e '/^$/d' -e '/^#/d')
 	
     # ca.pem is the bundle of CA certs. If the controller is a self-signed root
     # CA then this bundle is equivalent to controller-ca.pem. However, if the

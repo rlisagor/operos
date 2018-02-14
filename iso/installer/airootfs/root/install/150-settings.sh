@@ -16,4 +16,4 @@
 echo \> Saving settings >&3
 
 mkdir -p /mnt/etc/paxautoma
-export | sed 's/declare -x //' | grep -E "^(OPEROS_|CONTROLLER_)" > /mnt/etc/paxautoma/settings
+export | sed 's/declare -x //' | grep -E "^(OPEROS_|CONTROLLER_)" > /mnt/etc/paxautoma/initial-settings
