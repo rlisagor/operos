@@ -14,4 +14,6 @@
 # limitations under the License.
 
 echo \> Setting hostname >&3
+
 echo "controller" > /mnt/etc/hostname
+ln -sf /run/systemd/resolve/resolv.conf /mnt/etc/resolv.conf

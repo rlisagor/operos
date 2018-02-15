@@ -1,0 +1,10 @@
+[Unit]
+Description=Initialize configuration on first boot
+Before=systemd-networkd.service
+
+[Service]
+Type=oneshot
+ExecStart=/etc/systemd/scripts/bootstrap-settings
+
+[Install]
+WantedBy=multi-user.target

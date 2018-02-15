@@ -1,0 +1,6 @@
+[Match]
+Name=${CONTROLLER_PUBLIC_IF}
+
+[Network]
+Address=${CONTROLLER_PUBLIC_IF_IPNET}
+Gateway=${CONTROLLER_PUBLIC_IF_GW}

@@ -1,0 +1,5 @@
+[Match]
+Name=${CONTROLLER_PUBLIC_IF}
+
+[Network]
+DHCP=ipv4

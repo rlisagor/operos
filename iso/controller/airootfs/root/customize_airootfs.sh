@@ -42,6 +42,7 @@ systemctl disable getty@tty1.service
 systemctl enable statustty.service
 
 # Settings
+systemctl enable bootstrap-settings.service
 systemctl enable apply-settings.timer
 
 # Addons to run inside Kubernetes

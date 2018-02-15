@@ -15,7 +15,7 @@
 
 prepare_waterfront() {
     local key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 32 | base64)
-    cat > /var/operos/manifests/05-waterfront-secret.yml <<EOF
+    cat > /var/operos/addons/05-waterfront-secret.yml <<EOF
 apiVersion: v1
 kind: Secret
 metadata:
@@ -33,7 +33,7 @@ prepare_ceph() {
 
     ceph --cluster ceph osd pool create kube 128 128
 
-    cat > /var/operos/manifests/05-ceph-admin-key.yml <<EOF
+    cat > /var/operos/addons/05-ceph-admin-key.yml <<EOF
 apiVersion: v1
 kind: Secret
 metadata:
@@ -44,7 +44,7 @@ data:
   key1: ${ceph_cadmin_key}
 EOF
 
-    cat > /var/operos/manifests/05-ceph-secret-kube.yml <<EOF
+    cat > /var/operos/addons/05-ceph-secret-kube.yml <<EOF
 apiVersion: v1
 kind: Secret
 metadata:
@@ -56,7 +56,7 @@ data:
 EOF
 }
 
-mkdir -p /var/operos/manifests
+mkdir -p /var/operos/addons
 
 prepare_waterfront
 prepare_ceph

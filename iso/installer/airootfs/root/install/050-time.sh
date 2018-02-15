@@ -13,31 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-echo \> Setting up NTP >&3
+echo \> Setting timezone >&3
 
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/UTC /etc/localtime
-
-cat > /mnt/etc/chrony.conf <<EOF
-server 0.pool.ntp.org iburst
-server 1.pool.ntp.org iburst
-server 2.pool.ntp.org iburst
-server 3.pool.ntp.org iburst
-local
-
-rtconutc
-rtcsync
-
-allow ${OPEROS_CONTROLLER_IP}${OPEROS_NODE_MASK}
-deny
-EOF
-
-mkdir -p /mnt/etc/systemd/system/chronyd.service.d
-cat > /mnt/etc/systemd/system/chronyd.service.d/10-wait-sync.conf <<EOF
-[Unit]
-Before=kubelet.service
-After=network-online.target
-
-[Service]
-ExecStartPre=/usr/bin/chronyd -q -u chrony
-TimeoutStartSec=infinity
-EOF

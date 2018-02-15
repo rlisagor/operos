@@ -1,0 +1,8 @@
+[Match]
+Name=${CONTROLLER_PRIVATE_IF}
+
+[Network]
+Address=${OPEROS_CONTROLLER_IP}${OPEROS_NODE_MASK}
+
+[Route]
+Destination=${OPEROS_SERVICE_CIDR}
