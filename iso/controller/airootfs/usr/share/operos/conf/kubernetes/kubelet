@@ -1,0 +1,8 @@
+KUBELET_ARGS="--container-runtime=docker \
+    --kubeconfig=/etc/kubernetes/kubeconfig.yml \
+    --cluster-dns=${OPEROS_DNS_SERVICE_IP} \
+    --cluster-domain=${OPEROS_DNS_DOMAIN} \
+    --pod-manifest-path=/etc/kubernetes/manifests \
+    --node-labels=node-role.kubernetes.io/master=true \
+    --register-with-taints=node-role.kubernetes.io/master=true:NoSchedule \
+    --network-plugin=cni"

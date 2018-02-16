@@ -1,0 +1,26 @@
+{
+    "name": "k8s-pod-network",
+    "cniVersion": "0.3.0",
+    "plugins": [
+        {
+            "type": "calico",
+            "log_level": "info",
+            "datastore_type": "kubernetes",
+            "kubernetes": {
+                "k8s_api_root": "http://127.0.0.1:${OPEROS_KUBE_API_INSECURE_PORT}"
+            },
+            "policy": {
+                "type": "k8s"
+            },
+            "ipam": {
+                "type": "host-local",
+                "subnet": "usePodCidr"
+            }
+        },
+        {
+            "type": "portmap",
+            "capabilities": {"portMappings": true},
+            "snat": true
+        }
+    ]
+}

@@ -16,6 +16,7 @@
 
 # This script installs the test SSH key on the controller
 
+install -dm 700 /mnt/root/.ssh
 # For the controller
 install -m 600 /root/testkey.pub /mnt/root/.ssh/authorized_keys
 # For teamster to give to the workers

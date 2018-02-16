@@ -19,6 +19,13 @@ set -e
 chmod 700 /root
 chown 0:0 /root
 
+# Time zone
+ln -sf /usr/share/zoneinfo/UTC /etc/localtime
+
+# Names
+echo "controller" > /etc/hostname
+ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
 # Networking
 systemctl enable nat.service
 systemctl enable systemd-networkd.service
@@ -34,6 +41,7 @@ systemctl enable operos-cfg-store.service
 systemctl enable operos-cfg-populate.service
 
 # Operos services
+cp /usr/lib/syslinux/bios/ldlinux.c32 /etc/paxautoma/iso/
 systemctl enable teamster.service
 systemctl enable operos-image.service
 systemctl enable tftpd.service

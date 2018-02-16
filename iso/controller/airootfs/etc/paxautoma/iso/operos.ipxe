@@ -1,0 +1,7 @@
+#!ipxe
+:retry_dhcp
+dhcp && isset ${next-server} || goto retry_dhcp
+echo Operos worker booting from http://${next-server}:5080
+set 210:string http://${next-server}:5080/
+set 209:string worker.cfg
+chain http://${next-server}:5080/boot/syslinux-worker/lpxelinux.0

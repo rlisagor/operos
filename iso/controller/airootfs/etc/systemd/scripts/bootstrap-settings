@@ -14,11 +14,14 @@
 # limitations under the License.
 
 # This script bootstraps the configuration that needs to be in place before
-# Teamster can be launched for the first time.
+# Teamster can be launched for the first time, or that is unaffected by
+# configuration changes via Teamster.
 
+. /etc/systemd/scripts/_functions
 set -a; . /etc/paxautoma/initial-settings; set +a
 
-templatedir=/usr/share/operos/conf
+templatedir=/usr/share/operos
+
 
 write_file() {
     local src_file=$1 tgt_path=$2
@@ -26,19 +29,70 @@ write_file() {
         tgt_path=$tgt_path/$(basename $src_file)
     fi
 
-    echo "writing new version of $tgt_path"
+    echo "writing $tgt_path"
     envsubst < $src_file > $tgt_path
 }
 
 configure_network() {
-    local pub_templ=network/10-public-dhcp.network
+    local pub_templ=conf/network/10-public-dhcp.network
     if [[ "${CONTROLLER_PUBLIC_IF_MODE}" != "dhcp" ]]; then
-        pub_templ=network/10-public-static.network
+        pub_templ=conf/network/10-public-static.network
     fi
 
     write_file $templatedir/$pub_templ /etc/systemd/network/10-public.network
-    write_file $templatedir/network/20-private.network /etc/systemd/network/20-private.network
+    write_file $templatedir/conf/network/20-private.network /etc/systemd/network/20-private.network
+}
+
+configure_chrony() {
+    write_file ${templatedir}/conf/chrony/chrony.conf /etc
+}
+
+configure_worker_boot() {
+    export CLUSTER_SN_MASK=$(netmask ${OPEROS_NODE_MASK//\/})
+    export CLUSTER_NODE_START=$(increment_ipv4 $OPEROS_CONTROLLER_IP 10)
+    export CLUSTER_SN_START=$(network $OPEROS_CONTROLLER_IP ${OPEROS_NODE_MASK//\/})
+    export CLUSTER_NODE_END=$(end_ip $CLUSTER_NODE_START ${OPEROS_NODE_MASK//\/})
+
+    write_file ${templatedir}/conf/tftpd/tftpd /etc/conf.d/tftpd
+    write_file ${templatedir}/conf/dhcpd/ipxe-bootp.conf /etc/dhcpd
+    write_file ${templatedir}/conf/dhcpd/dhcpd.conf /etc
+    systemctl enable dhcpd4@${CONTROLLER_PRIVATE_IF}.service
+}
+
+configure_calico() {
+    mkdir -p /etc/cni/net.d
+    write_file ${templatedir}/conf/calico/10-calico.conflist /etc/cni/net.d/10-calico.conflist
+}
+
+configure_kubelet() {
+    write_file ${templatedir}/conf/kubernetes/kubelet /etc/kubernetes/kubelet
+}
+
+configure_manifests() {
+    mkdir -p /etc/kubernetes/manifests
+    mkdir -p /var/operos/addons
+
+    for manifest in ${templatedir}/manifests/*; do
+        write_file $manifest /etc/kubernetes/manifests
+    done
+
+    for manifest in ${templatedir}/addons/*; do
+        write_file $manifest /var/operos/addons
+    done
+}
+
+configure_ssh_key() {
+    mkdir -p /root/.ssh
+    chmod 700 /root/.ssh
+    ssh-keygen -f /root/.ssh/id_rsa -N ""
 }
 
 configure_network
+configure_chrony
+configure_worker_boot
+configure_calico
+configure_kubelet
+configure_manifests
+configure_ssh_key
+
 systemctl disable bootstrap-settings.service

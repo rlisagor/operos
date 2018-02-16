@@ -69,6 +69,18 @@ make_setup_mkinitcpio() {
     mkarchiso ${verbose} -w "${work_dir}" -C "${work_dir}/pacman.conf" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run
 }
 
+make_os_release() {
+    cat > ${work_dir}/airootfs/usr/lib/os-release <<EOF
+NAME="Operos ${layer}"
+PRETTY_NAME="Operos ${layer}"
+VERSION="${iso_version}"
+ID=operos
+ID_LIKE=archlinux
+ANSI_COLOR="0;36"
+HOME_URL="https://www.paxautoma.com/"
+EOF
+}
+
 make_customize_airootfs() {
     cp -af --no-preserve=ownership ${script_path}/iso/${layer}/airootfs ${work_dir}
 

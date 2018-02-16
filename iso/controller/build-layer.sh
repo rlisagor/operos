@@ -19,6 +19,7 @@ make_docker() {
 
 run_once make_prepare_layer node base
 run_once make_packages
+run_once make_os_release
 run_once make_customize_airootfs
 run_once make_syslinux base node controller
 run_once make_docker

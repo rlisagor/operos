@@ -13,23 +13,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# This script runs periodically after first boot, pulls settings from Teamster
+# and applies them, restarting any necessary services.
+
 cursettings=${cursettings:-/etc/paxautoma/settings}
 tmpsettings=${tmpsettings:-/tmp/operos-new-settings}
-
 templatedir=/usr/share/operos
+
+. /etc/systemd/scripts/_functions
 
 has_var_changed() {
     local var=$1
-    local old="$(set -a; . ${tmpsettings}; eval echo \${$var})"
-    local new="$(set -a; . ${cursettings}; eval echo \${$var})"
+    local old="$(load_settings ${tmpsettings}; eval echo \${$var})"
+    local new="$(load_settings ${cursettings}; eval echo \${$var})"
     [ "$old" -eq "$new" ] || return 1
+}
+
+load_settings() {
+    local src_file=$1
+    set -a
+
+    . ${src_file}
+    CLUSTER_SN_MASK=$(netmask ${OPEROS_NODE_MASK//\/})
+    CLUSTER_NODE_START=$(increment_ipv4 $OPEROS_CONTROLLER_IP 10)
+    CLUSTER_SN_START=$(network $OPEROS_CONTROLLER_IP ${OPEROS_NODE_MASK//\/})
+    CLUSTER_NODE_END=$(end_ip $CLUSTER_NODE_START ${OPEROS_NODE_MASK//\/})
+
+    set +a
 }
 
 new_val() {
     local var=$1
     (
-        set -a;
-        . ${cursettings};
+        load_settings ${cursettings}
+        eval echo \${$var}
+    )
+}
+
+old_val() {
+    local var=$1
+    (
+        load_settings ${tmpsettings}
         eval echo \${$var}
     )
 }
@@ -48,8 +72,8 @@ has_file_changed() {
     fi
 
     if diff -q \
-        <(set -a; . ${tmpsettings}; envsubst < ${targetfile}) \
-        <(set -a; . ${cursettings}; envsubst < ${targetfile}) > /dev/null
+        <(load_settings ${tmpsettings}; envsubst < ${targetfile}) \
+        <(load_settings ${cursettings}; envsubst < ${targetfile}) > /dev/null
     then
         # file unchanged
         return 1
@@ -74,53 +98,9 @@ write_file() {
 
     echo "writing new version of $tgt_path"
     (
-        set -a
-        . ${cursettings}
+        load_settings ${cursettings}
         envsubst < $src_file > $tgt_path
     )
-}
-
-restart_unit() {
-    local unit=$1
-    systemctl try-restart ${unit}
-}
-
-update_chrony() {
-    if has_file_changed ${templatedir}/conf/chrony/chrony.conf; then
-        write_file ${templatedir}/conf/chrony/chrony.conf /etc
-        restart_unit chronyd
-    fi
-}
-
-update_network() {
-    local pub_templ=network/10-public-dhcp.network
-    if [[ "$(new_val CONTROLLER_PUBLIC_IF_MODE)" != "dhcp" ]]; then
-        pub_templ=network/10-public-static.network
-    fi
-
-    if has_var_changed CONTROLLER_PUBLIC_IF_MODE || \
-            have_files_changed $pub_templ ${templatedir}/conf/network/20-private.network; then
-        write_file ${templatedir}/$pub_templ /etc/systemd/network/10-public.network
-        write_file ${templatedir}/network/20-private.network /etc/systemd/network/20-public.network
-        restart_unit systemd-networkd
-    fi
-}
-
-update_manifests() {
-    mkdir -p /etc/kubernetes/manifests
-    mkdir -p /var/operos/addons
-
-    for manifest in ${templatedir}/manifests/*; do
-        if has_file_changed $manifest; then
-            write_file $manifest /etc/kubernetes/manifests
-        fi
-    done
-
-    for manifest in ${templatedir}/addons/*; do
-        if has_file_changed $manifest; then
-            write_file $manifest /var/operos/addons
-        fi
-    done
 }
 
 update_settings() {
@@ -137,9 +117,6 @@ update_settings() {
     fi
 
     echo "${newsettings}" > ${cursettings}
-
-    update_chrony
-    update_manifests
 }
 
 update_password() {
