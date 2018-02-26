@@ -28,6 +28,9 @@ sed -i 's/#\(HandleLidSwitch=\)suspend/\1ignore/' /etc/systemd/logind.conf
 sed -i 's/#\(PermitRootLogin \).\+/\1yes/' /etc/ssh/sshd_config
 systemctl enable sshd
 
+# haveged
+systemctl enable haveged.service
+
 # Docker
 systemctl enable docker.service
 
