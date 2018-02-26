@@ -17,6 +17,7 @@ scriptpath="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd -P)"
 
 srcdir=
 rootdir=""
+noreboot=
 
 # Find the root directory of the ISO by traversing up the directory stack until
 # a directory is found that contains the file "operos/version". 
@@ -133,12 +134,13 @@ cleanup_files() {
     done
 }
 
-while getopts ":s:r:h" opt; do
+while getopts ":s:r:bh" opt; do
     case $opt in
     s) srcdir=$OPTARG ;;
     r) rootdir=$OPTARG ;;
+    b) noreboot=yes ;;
     h)
-        echo "Usage: $0 [-s <srcdir>] [-r <rootdir>] [-h]"
+        echo "Usage: $0 [-s <srcdir>] [-r <rootdir>] [-b] [-h] "
         echo "This script updates the Operos version on the controller."
         echo "It is not meant to be run directly."
         exit 0
@@ -173,3 +175,10 @@ copy_files
 update_bootloader
 update_settings
 cleanup_files
+
+echo "Upgrade completed"
+
+if [[ -z "${noreboot}" ]]; then
+    echo "Rebooting"
+    reboot
+fi
