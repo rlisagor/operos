@@ -16,6 +16,21 @@
 echo \> Installing bootloader >&3
 
 install_bios() {
+    mkdir -p /mnt/boot/operos-${OPEROS_VERSION}
+
+    # memtest (one version for machine - not versioned with Operos)
+    cp /run/archiso/bootmnt/operos/boot/memtest /mnt/boot/memtest
+    cp /run/archiso/bootmnt/operos/boot/memtest.COPYING /mnt/boot/memtest.COPYING
+
+    # kernel, ucode, initcpio image
+    cp /run/archiso/bootmnt/operos/boot/intel_ucode.img /mnt/boot/operos-${OPEROS_VERSION}/intel_ucode.img
+    cp /run/archiso/bootmnt/operos/boot/intel_ucode.LICENSE /mnt/boot/operos-${OPEROS_VERSION}/intel_ucode.LICENSE
+    cp /run/archiso/bootmnt/operos/boot/x86_64/archiso.img /mnt/boot/operos-${OPEROS_VERSION}/archiso.img
+    cp /run/archiso/bootmnt/operos/boot/x86_64/vmlinuz /mnt/boot/operos-${OPEROS_VERSION}/vmlinuz
+
+    # syslinux modules and config
+    cp -af /run/archiso/bootmnt/operos/boot/syslinux-* /mnt/boot
+
     # install MBR
     dd bs=440 conv=notrunc count=1 if=/usr/lib/syslinux/bios/gptmbr.bin of=${CONTROLLER_DISK}
 
@@ -29,8 +44,17 @@ EOF
 
     # set up syslinux
     arch-chroot /mnt extlinux --install /boot
+
+    cp /run/archiso/bootmnt/operos/installfiles/syslinux-entry.templ /mnt/boot/operos-${OPEROS_VERSION}/entry.cfg
+
+    cat > /mnt/boot/syslinux-controller/entries.cfg <<EOF
+DEFAULT operos-${OPEROS_VERSION}
+
+INCLUDE operos-${OPEROS_VERSION}/entry.cfg
+EOF
+
     sed -i "s/%CONTROLLER_DISK%/${CONTROLLER_DISK//\//\\\/}/g;
-            s/%OPEROS_VERSION%/${OPEROS_VERSION}/g;" /mnt/boot/syslinux-controller/*.cfg
+            s/%OPEROS_VERSION%/${OPEROS_VERSION}/g;" /mnt/boot/operos-${OPEROS_VERSION}/entry.cfg
 }
 
 install_efi() {
@@ -42,8 +66,12 @@ install_efi() {
 
     # copy loader config
     mkdir /mnt/efi/loader /mnt/efi/loader/entries
-    cp efiboot/loader/loader.conf /mnt/efi/loader/loader.conf
-    cp efiboot/loader/entries/operos.conf /mnt/efi/loader/entries/operos-${OPEROS_VERSION}.conf 
+    cp /run/archiso/bootmnt/operos/installfiles/efi-entry.templ /mnt/efi/loader/entries/operos-${OPEROS_VERSION}.conf 
+
+    cat > /mnt/efi/loader/loader.conf <<EOF
+default operos-%OPEROS_VERSION%
+timeout 5
+EOF
 
     find /mnt/efi/loader -name "*.conf" -exec \
         sed -i "s/%CONTROLLER_DISK%/${CONTROLLER_DISK//\//\\\/}/g;

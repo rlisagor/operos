@@ -43,7 +43,6 @@ mount ${CONTROLLER_DISK}5 /mnt/run/archiso/bootmnt
 
 # Copy files
 mkdir -p /mnt/run/archiso/bootmnt/operos-${OPEROS_VERSION}/
-cp -af /run/archiso/bootmnt/operos/boot/* /mnt/boot/
 cp -af /run/archiso/bootmnt/operos/x86_64 /mnt/run/archiso/bootmnt/operos-${OPEROS_VERSION}/
 
 # Unmount the directory with the SquashFS images to prevent it from being added

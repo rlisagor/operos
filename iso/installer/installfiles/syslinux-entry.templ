@@ -1,0 +1,8 @@
+LABEL operos-cur
+TEXT HELP
+Boot the Operos controller v%OPEROS_VERSION%.
+ENDTEXT
+MENU LABEL Operos controller v%OPEROS_VERSION%
+LINUX operos-%OPEROS_VERSION%/vmlinuz
+INITRD operos-%OPEROS_VERSION%/intel_ucode.img,operos-%OPEROS_VERSION%/archiso.img
+APPEND archisobasedir=operos-%OPEROS_VERSION% archisodevice=%CONTROLLER_DISK%5 cow_device=%CONTROLLER_DISK%6 cow_directory=/ archiso_layers="base node controller" edd=off quiet

@@ -22,6 +22,9 @@ make_prepare_iso_installer() {
     ln -f ${work_dir}/sfs/${install_dir}/${arch}/* ${work_dir}/installer/iso/${install_dir}/${arch}/
     cp -af ${work_dir}/worker/iso/${install_dir}/boot/syslinux-worker/ ${work_dir}/installer/iso/${install_dir}/boot/
     cp -af ${work_dir}/controller/iso/${install_dir}/boot/syslinux-controller/ ${work_dir}/installer/iso/${install_dir}/boot/
+
+    echo "${iso_version}" > ${work_dir}/installer/iso/${install_dir}/version
+    cp -af  --no-preserve=ownership ${script_path}/iso/installer/installfiles ${work_dir}/installer/iso/${install_dir}/installfiles
 }
 
 run_once make_prepare_layer base

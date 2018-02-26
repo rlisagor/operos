@@ -24,6 +24,7 @@ _mnt_sfs() {
         msg "done."
     fi
     sfs_dev=$(losetup --find --show --read-only "${img}")
+    msg ":: Mounted '${img}' to '${sfs_dev}'"
     echo ${sfs_dev} >> /run/archiso/used_block_devices
     _mnt_dev "${sfs_dev}" "${mnt}" "-r" "defaults"
 }
@@ -114,6 +115,7 @@ archiso_mount_handler() {
         if [[ "${copytoram}" != "y" ]]; then
             echo $(readlink -f ${archisodevice}) >> /run/archiso/used_block_devices
         fi
+        mount -o remount,rw "/run/archiso/bootmnt"
     fi
 
     for layer in ${archiso_layers}; do
