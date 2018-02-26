@@ -12,17 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-UPGRADER_FILES=$(shell find components/upgrader/ -name "*.go")
+OPEROSUP_FILES=$(shell find components/operosup/ -name "*.go")
 
-.PHONY: upgrader-novm
-upgrader-novm: iso/controller/airootfs/usr/bin/upgrader
+.PHONY: operosup-novm
+operosup-novm: iso/controller/airootfs/usr/bin/operosup
 
-iso/controller/airootfs/usr/bin/upgrader: components/teamster/pkg/teamster/teamster.pb.go $(UPGRADER_FILES) vendor
+iso/controller/airootfs/usr/bin/operosup: components/teamster/pkg/teamster/teamster.pb.go $(OPEROSUP_FILES) vendor
 	mkdir -p $(dir $@)
-	go build -v -o $@ \
-		./components/upgrader/cmd/check.go
+	go build -v -o $@ ./components/operosup/cmd/main.go
 
-clean: clean-upgrader
+clean: clean-operosup
 
-clean-upgrader:
-	rm -f iso/controller/airootfs/usr/bin/upgrader
+clean-operosup:
+	rm -f iso/controller/airootfs/usr/bin/operosup

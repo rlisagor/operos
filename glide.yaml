@@ -70,3 +70,5 @@ import:
 - package: github.com/msteinert/pam
 - package: github.com/cavaliercoder/grab
   version: ^2.0.0
+- package: github.com/spf13/cobra
+- package: github.com/freddierice/go-losetup

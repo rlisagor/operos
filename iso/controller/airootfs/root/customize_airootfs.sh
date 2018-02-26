@@ -26,6 +26,9 @@ ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 echo "controller" > /etc/hostname
 ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 
+# /tmp
+systemctl mask tmp.mount
+
 # Networking
 systemctl enable nat.service
 systemctl enable systemd-networkd.service

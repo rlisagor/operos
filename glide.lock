@@ -1,5 +1,5 @@
-hash: 64d1155e2803447ac1929a8a86bcaf1a03af7f9d7d2e28230213f8d04a5f8fc1
-updated: 2018-02-07T09:51:58.728780293-08:00
+hash: ab421470791336388c9f7898b52c7a3b991016242b7fc6e0ec5f12c865a4df42
+updated: 2018-02-23T09:04:53.70169374-08:00
 imports:
 - name: github.com/amoghe/go-crypt
   version: f85b640b0eefd979ef9bb2e919b53fe66f8b7b39
@@ -24,13 +24,14 @@ imports:
   - signer
   - signer/local
 - name: github.com/coreos/etcd
-  version: c23606781f63d09917a1e7abfcefeb337a9608ea
+  version: 28f3f26c0e303392556035b694f75768d449d33d
   subpackages:
   - auth/authpb
   - clientv3
   - etcdserver/api/v3rpc/rpctypes
   - etcdserver/etcdserverpb
   - mvcc/mvccpb
+  - pkg/types
 - name: github.com/coreos/go-systemd
   version: d2196463941895ee908e13531a23a39feb9e1243
   subpackages:
@@ -53,6 +54,8 @@ imports:
   - log
 - name: github.com/emicklei/go-restful-swagger12
   version: dcef7f55730566d41eae5db10e7d6981829720f6
+- name: github.com/freddierice/go-losetup
+  version: fc9adea44124401d8bfef3a97eaf61b5d44cc2c6
 - name: github.com/ghodss/yaml
   version: 0ca9ea5df5451ffdf184b4428c902747c2c11cd7
 - name: github.com/go-openapi/analysis
@@ -79,7 +82,7 @@ imports:
 - name: github.com/golang/glog
   version: 44145f04b68cf362d9c4df2182967c2275eaefed
 - name: github.com/golang/protobuf
-  version: 1e59b77b52bf8e4b449a57e6f79f21226d571845
+  version: bbd03ef6da3a115852eaf24c8a1c46aeb39aa175
   subpackages:
   - jsonpb
   - proto
@@ -90,11 +93,11 @@ imports:
   - ptypes/struct
   - ptypes/timestamp
 - name: github.com/google/certificate-transparency-go
-  version: dca6ef1506f6d1ca5f2996809f97b43a0ddd6785
+  version: 0dac42a6ed448ba220ee315abfaa6d26fd5fc9bb
+  repo: https://github.com/google/certificate-transparency-go
   subpackages:
   - asn1
   - client
-  - client/configpb
   - jsonclient
   - tls
   - x509
@@ -131,10 +134,13 @@ imports:
   version: bf9dde6d0d2c004a008c27aaee91170c786f6db8
 - name: github.com/imdario/mergo
   version: 6633656539c1639d9d78127b7d47c622b5d7b6dc
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/jroimartin/gocui
   version: 4f518eddb04b8f73870836b6d1941e8aa3c06637
 - name: github.com/juju/ratelimit
-  version: 5b9ff866471762aa2ab2dced63c9fb6f53921342
+  version: acf38b000a03e4ab89e40f20f1e548f4e6ac7f72
+  repo: https://github.com/juju/ratelimit
 - name: github.com/mailru/easyjson
   version: d5b7844b561a7bc640052f1b935f7b800330d7e0
   subpackages:
@@ -159,6 +165,8 @@ imports:
   version: 1c767008cab9cb0b047b5d55a7bcb5cc7e3d26fa
 - name: github.com/sirupsen/logrus
   version: d682213848ed68c0a260ca37d6dd5ace8423f5ba
+- name: github.com/spf13/cobra
+  version: a1e4933ab784095895e33dbe9f001ba10cfe2060
 - name: github.com/spf13/pflag
   version: e57e3eeb33f795204c1ca35f56c44f83227c6e66
 - name: github.com/stretchr/testify
@@ -173,14 +181,14 @@ imports:
 - name: github.com/wercker/journalhook
   version: 158dbb9fcbfcc3386437e516bc71b58690606e91
 - name: golang.org/x/crypto
-  version: 13931e22f9e72ea58bb73048bc752b48c6d4d4ac
+  version: 49796115aa4b964c318aad4f3084fdb41e9aa067
   subpackages:
   - ocsp
   - pkcs12
   - pkcs12/internal/rc2
   - ssh/terminal
 - name: golang.org/x/net
-  version: 5ccada7d0a7ba9aeb5d3aca8d3501b4c2a509fec
+  version: cbe0f9307d0156177f9dd5dc85da1a31abc5f2fb
   subpackages:
   - context
   - context/ctxhttp
@@ -191,12 +199,12 @@ imports:
   - lex/httplex
   - trace
 - name: golang.org/x/sys
-  version: 810d7000345868fc619eb81f46307107118f4ae1
+  version: c1138c84af3a9927aee1a1b8b7ce06c9b7ea52bc
   subpackages:
   - unix
   - windows
 - name: golang.org/x/text
-  version: e19ae1496984b1c655b8044a65c0300a3c878dd3
+  version: 9e2b64d659da1afe07ce1c9c1dfefc09d188f21e
   subpackages:
   - cases
   - internal
@@ -215,7 +223,7 @@ imports:
   - googleapis/api/annotations
   - googleapis/rpc/status
 - name: google.golang.org/grpc
-  version: 6b51017f791ae1cfbec89c52efdf444b13b550ef
+  version: 8e4536a86ab602859c20df5ebfd0bd4228d08655
   subpackages:
   - balancer
   - balancer/base
@@ -224,6 +232,7 @@ imports:
   - connectivity
   - credentials
   - encoding
+  - encoding/proto
   - grpclb/grpc_lb_v1/messages
   - grpclog
   - health/grpc_health_v1

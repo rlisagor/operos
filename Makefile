@@ -30,7 +30,7 @@ include components/prospector/prospector.mk
 include components/teamster/teamster.mk
 include components/ipxe/ipxe.mk
 include components/waterfront/waterfront.mk
-include components/upgrader/upgrader.mk
+include components/operosup/operosup.mk
 
 # Write the .buildnum file if the build number changed since the last build.
 # This file can serve as a prerequisite for builds that depend on the build
@@ -53,7 +53,7 @@ vagrant:
 
 .PHONY: packages images test isobuild
 
-packages images test isobuild isobuild-dev installer statustty diag prospector teamster ipxe upgrader:
+packages images test isobuild isobuild-dev installer statustty diag prospector teamster ipxe upgrader operosup:
 	time vagrant ssh -c "cd ~/operos && make $@-novm BUILD_NUM=$(BUILD_NUM)"
 
 .PHONY: packages-novm
@@ -67,11 +67,11 @@ images-novm:
 isobuild: waterfront
 isobuild-dev: waterfront
 
-isobuild-novm: installer-novm statustty-novm diag-novm teamster-novm prospector-novm ipxe-novm
+isobuild-novm: installer-novm statustty-novm diag-novm teamster-novm prospector-novm ipxe-novm operosup-novm
 	cp versions iso/installer/airootfs/root/versions
 	sudo ./vagrant-build.sh -V $(ISO_VERSION) -L OPEROS_$(subst .,_,$(ISO_VERSION)) base node worker controller installer
 
-isobuild-dev-novm: installer-novm statustty-novm diag-novm teamster-novm prospector-novm ipxe-novm keys/testkey
+isobuild-dev-novm: installer-novm statustty-novm diag-novm teamster-novm prospector-novm ipxe-novm operosup-novm keys/testkey
 	cp versions iso/installer/airootfs/root/versions
 	sudo ./vagrant-build.sh -V $(ISO_VERSION) -L OPEROS_$(subst .,_,$(ISO_VERSION)) -d base node worker controller installer
 

@@ -35,7 +35,7 @@ message UpgradeCheckReq {
 
 message UpgradeCheckResp {
     string available_version = 1;
-    repeated string download_urls = 2;
+    string url = 2;
 }
 
 service Gatekeeper {
