@@ -27,6 +27,7 @@ import accessModule from 'views/access';
 import clusterModule from 'views/cluster';
 import metricsModule from 'views/metrics';
 import aboutModule from 'views/about';
+import settingsModule from 'views/settings';
 
 const theme = createMuiTheme({
   palette: {
@@ -53,16 +54,16 @@ class App extends React.Component {
 
   render() {
     if (this.props.data.loading) {
-      return <div>Loading...</div>
+      return <div>Loading...</div>;
     } else if (!this.props.data.login_info.logged_in) {
-      return <LoginScreen />
+      return <LoginScreen />;
     }
 
     const menu = [
       clusterModule.menuItem,
       metricsModule.menuItem,
       nodesModule.menuItem,
-      accessModule.menuItem,
+      settingsModule.menuItem,
       aboutModule.menuItem
     ];
 
@@ -71,6 +72,7 @@ class App extends React.Component {
       ...metricsModule.views,
       ...nodesModule.views,
       ...accessModule.views,
+      ...settingsModule.views,
       ...aboutModule.views
     ];
 

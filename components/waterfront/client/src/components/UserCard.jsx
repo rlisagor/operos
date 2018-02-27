@@ -18,11 +18,11 @@ import React from 'react';
 import {graphql, gql, compose} from 'react-apollo';
 
 import Avatar from 'material-ui/Avatar';
-import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
 import Icon from 'material-ui/Icon';
-import Card, {CardHeader, CardContent, CardActions} from 'material-ui/Card';
-import {CircularProgress} from 'material-ui/Progress';
+import Card, {CardHeader} from 'material-ui/Card';
+import List, {ListItem, ListItemIcon, ListItemText} from 'material-ui/List';
+import {withRouter} from 'react-router';
 import {withStyles} from 'material-ui/styles';
 
 const styles = {
@@ -36,19 +36,26 @@ class UserCard extends React.Component {
     super();
     this.state = {
       loggingOut: false
-    }
+    };
   }
 
   handleLogout() {
     this.setState({
       loggingOut: true
-    })
+    });
 
     this.props.mutate().catch(err => {
       this.setState({
         loggingOut: false
-      })  
-    })
+      });
+    });
+
+    this.props.closePopover();
+  }
+
+  handleCredentials() {
+    this.props.history.push('/access');
+    this.props.closePopover();
   }
 
   render() {
@@ -61,20 +68,22 @@ class UserCard extends React.Component {
             title={user.username}
         />
         <Divider />
-        <CardActions>
-          { this.state.loggingOut
-            ? <CircularProgress size={24} />
-            : <Button dense raised color="accent" onClick={() => this.handleLogout()}>
-                Log out
-              </Button>
-          }
-        </CardActions>
+        <List>
+          <ListItem button>
+            <ListItemIcon><Icon>lock</Icon></ListItemIcon>
+            <ListItemText primary="Credentials" onClick={() => this.handleCredentials()} />
+          </ListItem>
+          <ListItem button onClick={() => this.handleLogout()} disabled={this.state.loggingOut}>
+            <ListItemIcon><Icon>exit_to_app</Icon></ListItemIcon>
+            <ListItemText primary="Log out" />
+          </ListItem>
+        </List>
       </Card>
     );
   }
 }
 
-export default withStyles(styles)(compose(
+export default withRouter(withStyles(styles)(compose(
   graphql(gql`
     query {
       login_info {
@@ -91,4 +100,4 @@ export default withStyles(styles)(compose(
       }
     }  
   `)
-)(UserCard));
+)(UserCard)));

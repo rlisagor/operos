@@ -17,7 +17,7 @@ limitations under the License.
 import React from 'react';
 import {withStyles} from 'material-ui/styles';
 
-import CredentialsCard from 'views/access/CredentialsCard';
+import RootPasswordCard from 'views/settings/RootPasswordCard';
 
 
 const styles = {
@@ -31,16 +31,16 @@ const styles = {
   }
 };
 
-class AccessManagementView extends React.Component {
+class SettingsView extends React.Component {
   render() {
     const {classes} = this.props;
 
     return (
       <div className={classes.container}>
-        <CredentialsCard className={classes.card} />
+        <RootPasswordCard className={classes.card} />
       </div>
     );
   }
 }
 
-export default withStyles(styles)(AccessManagementView);
+export default withStyles(styles)(SettingsView);

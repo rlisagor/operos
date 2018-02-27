@@ -13,7 +13,7 @@ dev:
 	GRPC_GO_LOG_SEVERITY_LEVEL=info \
 	GRPC_GO_LOG_VERBOSITY_LEVEL=10 \
 	go run -v cmd/main.go \
-		--kubeconfig=../../operos/kubeconfig \
+		--kubeconfig=../../../keys/operos-credentials/kubeconfig \
 		--kube-url="http://$(KUBE)" \
 		--teamster $(TEAMSTER) \
 		--teamster-http $(TEAMSTER_HTTP) \

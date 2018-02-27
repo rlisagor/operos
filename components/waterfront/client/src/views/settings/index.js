@@ -14,33 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-import {withStyles} from 'material-ui/styles';
+import SettingsView from 'views/settings/SettingsView';
 
-import CredentialsCard from 'views/access/CredentialsCard';
-
-
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column'
+export default {
+  menuItem: {
+    name: 'Settings',
+    icon: 'settings',
+    link: '/settings'
   },
-  card: {
-    maxWidth: 800,
-    marginBottom: 16
-  }
+  views: [
+    {
+      path: '/settings',
+      component: SettingsView
+    }
+  ]
 };
-
-class AccessManagementView extends React.Component {
-  render() {
-    const {classes} = this.props;
-
-    return (
-      <div className={classes.container}>
-        <CredentialsCard className={classes.card} />
-      </div>
-    );
-  }
-}
-
-export default withStyles(styles)(AccessManagementView);

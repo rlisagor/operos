@@ -23,7 +23,6 @@ import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
 import List, {ListItem, ListItemIcon, ListItemText} from 'material-ui/List';
 import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 import Popover from 'material-ui/Popover';
 import classNames from 'classnames';
@@ -213,7 +212,7 @@ class Chrome extends React.Component {
                 onRequestClose={this.handleAccountMenuClose.bind(this)}
                 anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
             >
-              <UserCard />
+              <UserCard closePopover={this.handleAccountMenuClose.bind(this)} />
             </Popover>
           </Toolbar>
         </AppBar>
