@@ -18,6 +18,7 @@ import React from 'react';
 import {withStyles} from 'material-ui/styles';
 
 import RootPasswordCard from 'views/settings/RootPasswordCard';
+import UpgradeCard from 'views/settings/UpgradeCard';
 
 
 const styles = {
@@ -37,6 +38,7 @@ class SettingsView extends React.Component {
 
     return (
       <div className={classes.container}>
+        <UpgradeCard className={classes.card} />
         <RootPasswordCard className={classes.card} />
       </div>
     );
